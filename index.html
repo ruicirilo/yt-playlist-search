@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>YouTube Playlist Search</title>
+  <style>
+  /* style.css */
+
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Container styles */
+.container {
+    max-width: 600px; /* Limitar a largura em telas maiores */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styles */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Input styles */
+#search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Button styles */
+#search-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#search-button:hover {
+    background-color: #0056b3;
+}
+
+/* Playlist list styles */
+.playlist-list {
+    margin-top: 20px;
+}
+
+/* Playlist item styles */
+.playlist-item {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.playlist-item img {
+    width: 100%; /* Faz a imagem se ajustar ao tamanho do contêiner */
+    height: auto; /* Mantém a proporção da imagem */
+    border-radius: 4px;
+}
+
+/* Title styles */
+.playlist-item h3 {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+/* Responsive styles */
+@media (max-width: 480px) {
+    /* Ajustes de fonte para telas menores */
+    h1 {
+        font-size: 24px;
+    }
+
+    #search-input, #search-button {
+        font-size: 16px;
+    }
+
+    .playlist-item h3 {
+        font-size: 14px;
+    }
+}
+
+  </style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<h1>YouTube Playlist Search</h1>
+		<input type="text" id="search-input" placeholder="Search for playlists...">
+		<button id="search-button">Search</button>
+		<div class="playlist-list"></div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
+<!-- partial -->
+  <script>
+
+$(document).ready(function() {
+	$('#search-button').click(function() {
+		var searchTerm = $('#search-input').val();
+		var url = 'https://www.googleapis.com/youtube/v3/search';
+		var params = {
+			part: 'snippet',
+			q: searchTerm,
+			type: 'playlist',
+			maxResults: 10,
+			key: 'AIzaSyDAfNPJKuq6Cy2bkm3SIXJOL4RHLpEJGJs'
+		};
+
+		$.getJSON(url, params, function(data) {
+			console.log(data);
+			var results = data.items;
+			$('.playlist-list').empty();
+			$.each(results, function(index, item) {
+				var playlistId = item.id.playlistId;
+				var playlistTitle = item.snippet.title;
+				var playlistThumbnail = item.snippet.thumbnails.medium.url;
+				var playlistLink = 'https://www.youtube.com/embed/?listType=playlist&list=' + playlistId + '&autoplay=1&cc_load_policy=1&disablekb=1&enablejsapi=1&modestbranding=1&autohide=1&amp;hl=en_GB';
+
+				var html = '<div class="playlist-item">' +
+					'<a class="popup-youtube" href="' + playlistLink + '">' +
+						'<img src="' + playlistThumbnail + '" alt="' + playlistTitle + '">' +
+						'<h3>' + playlistTitle + '</h3>' +
+					'</a>' +
+				'</div>';
+
+				$('.playlist-list').append(html);
+			});
+
+			$('.popup-youtube').magnificPopup({
+				type: 'iframe'
+			});
+		});
+	});
+});
+</script>
+
+</body>
+</html>
